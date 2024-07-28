@@ -1,0 +1,39 @@
+.fixed-top {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1030;
+}
+
+.navbar {
+    padding: 1.5em 8em;
+    width: 100%;
+    border-radius: 0px;
+    z-index: 999;
+    margin-bottom: 0px;
+    transition: all 0.2s ease-in-out;
+    color: #fff;
+    transition: all 0.2s ease-in-out;
+}
+
+.sticky.navbar {
+    margin-top: 0px;
+    padding-top: 1em;
+    padding: 1em 8em;
+    // background-color: #fff;
+    // box-shadow: 0 10px 33px rgba(0, 0, 0, 0.1);
+    // color: #3c4858 !important;
+
+
+}
+
+@media only screen and (max-width: 600px) {
+    .navbar {
+        padding: 1.5em 2em;
+    }
+
+    .sticky.navbar {
+        padding: 1em 2em;
+    }
+}
