@@ -1,11 +1,10 @@
 import { Flex, Box, Spacer, Heading } from '@chakra-ui/react';
 import './HeaderInvitation.scss';
 import onScroll from '../../core/utils/onScroll';
-import { useEffect } from 'react';
 
 export default function HeaderInvitation() {
     const hasScrolled = onScroll(100);
-    
+
     return (
         <Flex
             className={`fixed-top navbar ${hasScrolled ? 'sticky' : ''}`}
