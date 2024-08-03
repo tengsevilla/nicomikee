@@ -1,6 +1,6 @@
-import { Box, Menu, MenuButton, MenuItem, MenuList, IconButton, Flex } from '@chakra-ui/react';
-import { FaCog, FaHamburger, FaHome, FaUser, FaEnvelopeOpen } from "react-icons/fa";
-// import { FaEnvelopeOpen } from "react-icons/fa6";
+import { Box, IconButton, Flex } from '@chakra-ui/react';
+import { FaCog, FaHome, FaUser, FaEnvelopeOpen } from "react-icons/fa";
+import { MdAddAPhoto } from "react-icons/md";
 import { useBreakpointValue } from '@chakra-ui/react';
 export const NavigationInvite = () => {
     const isMobile = useBreakpointValue({ base: true, md: false });
@@ -56,29 +56,12 @@ export const NavigationInvite = () => {
 const MobileMenu = () => {
     return (
         <Box position="fixed" bottom="8" right="8" zIndex={1}>
-            <Menu>
-                <MenuButton
-                    as={IconButton}
-                    aria-label='Options'
-                    icon={<FaHamburger color='teal' />}
-                    size="lg"
-                    isRound
-                />
-                <MenuList>
-                    <MenuItem>
-                        Invitation
-                    </MenuItem>
-                    <MenuItem>
-                        Couple
-                    </MenuItem>
-                    <MenuItem>
-                        Event
-                    </MenuItem>
-                    <MenuItem>
-                        RSVP
-                    </MenuItem>
-                </MenuList>
-            </Menu>
+            <IconButton
+                aria-label='Add photo'
+                icon={<MdAddAPhoto />}
+                size="lg"
+                isRound
+            />
         </Box>
     )
 }

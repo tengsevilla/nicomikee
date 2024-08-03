@@ -8,7 +8,7 @@ import { Formik, Field, FormikErrors } from 'formik';
 import { useState } from 'react';
 import { IGuestConfirmation } from '../../core/models/guests';
 import { IQueryParams, useQueryParamStore } from '../../core/models/store';
-
+import { BsFillSendFill } from "react-icons/bs";
 const validationSchema = Yup.object({
     guests: Yup.array().of(
         Yup.object().shape({
@@ -46,7 +46,8 @@ export default function GuestConfirmation() {
     const isMobile = useBreakpointValue({ base: true, md: false });
     const { params } = useQueryParamStore();
     const [guestForm] = useState<IGuestConfirmation[]>(() => createInitialGuests(params));
-
+    const fontSize = useBreakpointValue({ base: '12px', md: '16px', lg: '18px' });
+    const padding = useBreakpointValue({ base: '8px 12px', md: '10px 16px', lg: '12px 24px' });
     return (
         <MotionBoxContainer>
             <Flex
@@ -160,7 +161,7 @@ export default function GuestConfirmation() {
                                             )}
                                         </Accordion>
                                         <Flex justifyContent={'center'} mt={'auto'} py={4}>
-                                            <Button colorScheme="teal" size="lg" w={'auto'} onClick={() => { handleSubmit() }}>Send confirmation</Button>
+                                            <Button leftIcon={<BsFillSendFill />} fontSize={fontSize} padding={padding} w={'auto'} onClick={() => { handleSubmit() }}>Send confirmation</Button>
                                         </Flex>
 
                                     </Card>
@@ -257,7 +258,7 @@ export default function GuestConfirmation() {
                                             )}
                                         </Flex>
                                         <Flex justifyContent={'center'} mt={'auto'} pb={8}>
-                                            <Button colorScheme="teal" size="lg" w={'auto'} onClick={() => { handleSubmit() }}>Send confirmation</Button>
+                                            <Button leftIcon={<BsFillSendFill />} fontSize={fontSize} padding={padding} w={'auto'} onClick={() => { handleSubmit() }}>Send confirmation</Button>
                                         </Flex>
 
                                     </Card>

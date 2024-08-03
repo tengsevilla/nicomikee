@@ -22,7 +22,6 @@ export default function EventContainer() {
                 <VStack
                     w={'full'}
                     justify={'center'}
-                    px={{ base: 4, md: 8 }}
                 >
                     {isMobile ?
                         <MobileViewCard />
@@ -73,8 +72,8 @@ export const EventDetails = () => {
 
     useGesture(
         {
-            onDrag: ({ active, offset: [x, y] }) =>
-                api({ x, y, rotateX: 0, rotateY: 0, scale: active ? 1 : 1.1 }),
+            // onDrag: ({ active, offset: [x, y] }) =>
+            //     api({ x, y, rotateX: 0, rotateY: 0, scale: active ? 1 : 1.1 }),
             onPinch: ({ offset: [d, a] }) => api({ zoom: d / 200, rotateZ: a }),
             onMove: ({ xy: [px, py], dragging }) =>
                 !dragging &&
@@ -108,27 +107,26 @@ export const EventDetails = () => {
                     boxShadow={'0px 10px 30px -5px rgba(0, 0, 0, 0.3)'}
                     transition={'box-shadow 0.5s, opacity 0.5s;'}
                     willChange={'transform'}
-                    cursor={'grab'}
                     borderRadius={'16px'}
                     textAlign={'center'}
-                    py={8}
+                    py={{ base: 4, md: 8 }}
                     px={12}
                     onClick={(e) => e.stopPropagation()}
                     backgroundImage={`url(${BGCard})`}
                     backgroundSize={'cover'}
                     backgroundPosition={'center center'}
                 >
-                    <Text fontSize='xl'><Text as={'span'} fontSize={{ base: 'sm', md: 'md' }} color={'gray.500'}>Date:</Text> January 10, 2050</Text>
-                    <Text fontSize='xl'><Text as={'span'} fontSize={{ base: 'sm', md: 'md' }} color={'gray.500'}>Time:</Text> 1:30 PM</Text>
-                    <Text fontSize='xl'><Text as={'span'} fontSize={{ base: 'sm', md: 'md' }} color={'gray.500'}>Church:</Text> Sta Maria Parish</Text>
-                    <Text fontSize='xl'><Text as={'span'} fontSize={{ base: 'sm', md: 'md' }} color={'gray.500'}>Reception:</Text> Iloilo Convention Center</Text>
-                    <Text fontSize='xl'><Text as={'span'} fontSize={{ base: 'sm', md: 'md' }} color={'gray.500'}>Dress code:</Text> Formal attire</Text>
-                    <Text fontSize={{ base: 'sm', md: 'md' }} color={'gray.500'} mt={4}>Color palette for guest</Text>
-                    <Text fontSize='xl'>Gray, silver, nudes and beige</Text>
-                    <Text fontSize={{ base: 'sm', md: 'md' }} color={'gray.500'} mt={4}>Gentlemen</Text>
-                    <Text fontSize='xl'>Classic barong tagalog paired with black pants and black shoes</Text>
-                    <Text fontSize={{ base: 'sm', md: 'md' }} color={'gray.500'} mt={4}>Ladies</Text>
-                    <Text fontSize='xl'>Formal long dress in shades of gray, silver, nude and beige</Text>
+                    <Text ><Text as={'span'} >Date:</Text> January 01, 2050</Text>
+                    <Text ><Text as={'span'} >Time:</Text> 1:30 PM</Text>
+                    <Text ><Text as={'span'} >Church:</Text> The Church Philippines</Text>
+                    <Text ><Text as={'span'} >Reception:</Text> Tokyo Dome Japan</Text>
+                    <Text ><Text as={'span'} >Dress code:</Text> Samurai</Text>
+                    <Text color={'gray.500'} mt={4}>Color palette for guest</Text>
+                    <Text >Gray, silver, nudes and beige</Text>
+                    <Text color={'gray.500'} mt={4}>Gentlemen</Text>
+                    <Text >Classic rare equipment with resistance to fear</Text>
+                    <Text color={'gray.500'} mt={4}>Ladies</Text>
+                    <Text >Formal long dress in shades of gray, silver, nude and beige</Text>
                 </Card>
             </animated.div>
         </Flex>
@@ -165,8 +163,8 @@ export const EventGuide = () => {
 
     useGesture(
         {
-            onDrag: ({ active, offset: [x, y] }) =>
-                api({ x, y, rotateX: 0, rotateY: 0, scale: active ? 1 : 1.1 }),
+            // onDrag: ({ active, offset: [x, y] }) =>
+            //     api({ x, y, rotateX: 0, rotateY: 0, scale: active ? 1 : 1.1 }),
             onPinch: ({ offset: [d, a] }) => api({ zoom: d / 200, rotateZ: a }),
             onMove: ({ xy: [px, py], dragging }) =>
                 !dragging &&
@@ -200,20 +198,19 @@ export const EventGuide = () => {
                     boxShadow={'0px 10px 30px -5px rgba(0, 0, 0, 0.3)'}
                     transition={'box-shadow 0.5s, opacity 0.5s;'}
                     willChange={'transform'}
-                    cursor={'grab'}
                     borderRadius={'16px'}
                     textAlign={'center'}
-                    py={8}
+                    py={{ base: 4, md: 8 }}
                     px={12}
                     onClick={(e) => e.stopPropagation()}
                     backgroundImage={`url(${BGCard2})`}
                     backgroundSize={'cover'}
                     backgroundPosition={'center center'}
                 >
-                    <Text fontSize={{ base: 'md', md: 'lg' }} mt={16} mb={2} color={'gray.500'}>NO TO THE FOLLOWING PLEASE</Text>
-                    <Text fontSize='xl'>Strictly no wearing of white dress, loud colors, faded denim, ripped jeans, shirt, shorts, & flipflops</Text>
-                    <Text fontSize='xl' mt={8} mb={2} color={'gray.500'}>GIFT GUIDE</Text>
-                    <Text fontSize={'xl'}>As love is what this day is all about, your presence is one we can’t celebrate without. But should you still believe that a gift is worth giving, a small envelope for our future home and family is a delightful blessing.</Text>
+                    <Text mt={16} mb={2} color={'gray.500'}>NO TO THE FOLLOWING PLEASE</Text>
+                    <Text >Strictly no wearing of white dress, loud colors, faded denim, ripped jeans, shirt, shorts, & flipflops</Text>
+                    <Text mt={8} mb={2} color={'gray.500'}>GIFT GUIDE</Text>
+                    <Text >As love is what this day is all about, your presence is one we can’t celebrate without. But should you still believe that a gift is worth giving, a small envelope for our future home and family is a delightful blessing.</Text>
                 </Card>
             </animated.div>
         </Flex>
@@ -266,7 +263,8 @@ const MobileViewCard = () => {
                 style={{ opacity: opacity.to(o => 1 - o), transform }}
             >
                 <Card
-                    w={'calc(100vw - 80px)'} h={640}
+                    w={'calc(100vw - 80px)'}
+                    h={{ base: 480, sm: 480, md: 640 }}
                     boxShadow={'0px 10px 30px -5px rgba(0, 0, 0, 0.3)'}
                     textAlign={'center'}
                     p={8}
@@ -274,17 +272,17 @@ const MobileViewCard = () => {
                     backgroundSize={'cover'}
                     backgroundPosition={'center center'}
                 >
-                    <Text fontSize='xl'><Text as={'span'} fontSize={{ base: 'sm', md: 'md' }} color={'gray.500'}>Date:</Text> January 10, 2050</Text>
-                    <Text fontSize='xl'><Text as={'span'} fontSize={{ base: 'sm', md: 'md' }} color={'gray.500'}>Time:</Text> 1:30 PM</Text>
-                    <Text fontSize='xl'><Text as={'span'} fontSize={{ base: 'sm', md: 'md' }} color={'gray.500'}>Church:</Text> Sta Maria Parish</Text>
-                    <Text fontSize='xl'><Text as={'span'} fontSize={{ base: 'sm', md: 'md' }} color={'gray.500'}>Reception:</Text> Iloilo Convention Center</Text>
-                    <Text fontSize='xl'><Text as={'span'} fontSize={{ base: 'sm', md: 'md' }} color={'gray.500'}>Dress code:</Text> Formal attire</Text>
-                    <Text fontSize={{ base: 'sm', md: 'md' }} color={'gray.500'} mt={4}>Color palette for guest</Text>
-                    <Text fontSize='xl'>Gray, silver, nudes and beige</Text>
-                    <Text fontSize={{ base: 'sm', md: 'md' }} color={'gray.500'} mt={4}>Gentlemen</Text>
-                    <Text fontSize='xl'>Classic barong tagalog paired with black pants and black shoes</Text>
-                    <Text fontSize={{ base: 'sm', md: 'md' }} color={'gray.500'} mt={4}>Ladies</Text>
-                    <Text fontSize='xl'>Formal long dress in shades of gray, silver, nude and beige</Text>
+                    <Text ><Text as={'span'} >Date:</Text> January 01, 2050</Text>
+                    <Text ><Text as={'span'} >Time:</Text> 1:30 PM</Text>
+                    <Text ><Text as={'span'} >Church:</Text> The Church Philippines</Text>
+                    <Text ><Text as={'span'} >Reception:</Text> Tokyo Dome Japan</Text>
+                    <Text ><Text as={'span'} >Dress code:</Text> Samurai</Text>
+                    <Text color={'gray.500'} mt={4}>Color palette for guest</Text>
+                    <Text >Gray, silver, nudes and beige</Text>
+                    <Text color={'gray.500'} mt={4}>Gentlemen</Text>
+                    <Text >Classic rare equipment with resistance to fear</Text>
+                    <Text color={'gray.500'} mt={4}>Ladies</Text>
+                    <Text >Formal long dress in shades of gray, silver, nude and beige</Text>
                 </Card>
             </a.div>
             <a.div
@@ -297,7 +295,7 @@ const MobileViewCard = () => {
             >
                 <Card
                     w={'calc(100vw - 80px)'}
-                    h={640}
+                    h={{ base: 480, sm: 480, md: 640 }}
                     boxShadow={'0px 10px 30px -5px rgba(0, 0, 0, 0.3)'}
                     textAlign={'center'}
                     p={8}
@@ -305,10 +303,10 @@ const MobileViewCard = () => {
                     backgroundSize={'cover'}
                     backgroundPosition={'center center'}
                 >
-                    <Text fontSize={{ base: 'md', md: 'lg' }} mt={{ base: 12, md: 16 }} mb={2} color={'gray.500'}>NO TO THE FOLLOWING PLEASE</Text>
-                    <Text fontSize='xl'>Strictly no wearing of white dress, loud colors, faded denim, ripped jeans, shirt, shorts, & flipflops</Text>
-                    <Text fontSize={{ base: 'md', md: 'lg' }}  mt={8} mb={2} color={'gray.500'}>GIFT GUIDE</Text>
-                    <Text fontSize={'xl'}>As love is what this day is all about, your presence is one we can’t celebrate without. But should you still believe that a gift is worth giving, a small envelope for our future home and family is a delightful blessing.</Text>
+                    <Text mt={{ base: 8, sm: 8, md: 12 }} mb={2} color={'gray.500'}>NO TO THE FOLLOWING PLEASE</Text>
+                    <Text >Strictly no wearing of white dress, loud colors, faded denim, ripped jeans, shirt, shorts, & flipflops</Text>
+                    <Text mt={8} mb={2} color={'gray.500'}>GIFT GUIDE</Text>
+                    <Text >As love is what this day is all about, your presence is one we can’t celebrate without. But should you still believe that a gift is worth giving, a small envelope for our future home and family is a delightful blessing.</Text>
                 </Card>
             </a.div>
         </div>

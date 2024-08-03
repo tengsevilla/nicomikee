@@ -5,14 +5,25 @@ import Invitation from './pages/Invite/Invitation';
 import Couple from './pages/Invite/Couple';
 './components/Navigation/NavigationInvite';
 import { Parallax, ParallaxLayer, IParallax } from '@react-spring/parallax'
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import EventContainer from './pages/Invite/Event';
 import GuestConfirmation from './pages/Invite/GuestConfirmation';
-import { useSyncQueryParams } from './core/models/store';
+import { useQueryParamStore, useSyncQueryParams } from './core/models/store';
+import WelcomeView from './pages/Invite/WelcomeView';
+import EventPage from './pages/Event/EventPage';
+import HeaderInvitation from './components/Header/HeaderInvitation';
+import EventGallery from './pages/Event/EventGallery';
 
 function App() {
   const parallax = useRef<IParallax>(null!);
   useSyncQueryParams();
+  const { params } = useQueryParamStore();
+  const { guest1, guest2, isPair } = params;
+  const isViewPage = (guest1 && guest2) ? false : true;
+
+  useEffect(() => {
+    console.log({ guest1, guest2, isPair, isViewPage });
+  }, [params]);
 
   return (
     <ChakraProvider theme={theme}>
@@ -34,7 +45,9 @@ function App() {
                 speed={0}
                 onClick={() => parallax.current.scrollTo(1)}
               >
-                <Invitation />
+                {
+                  (isViewPage) ? <WelcomeView /> : <Invitation />
+                }
               </ParallaxLayer>
               <ParallaxLayer
                 offset={1}
@@ -60,7 +73,21 @@ function App() {
             </Parallax>
           </Box>
         } />
+        <Route path="/event" element={
+          <>
+            <HeaderInvitation />
+            <EventPage />
+          </>
+        } />
+        <Route path="/event/gallery" element={
+          <>
+            <HeaderInvitation />
+            <EventGallery />
+          </>
+        } />
       </Routes>
+
+
     </ChakraProvider>
   )
 }
