@@ -6,37 +6,39 @@ import { MotionBoxContainer } from '../../components/MotionBox/MotionBoxContaine
 import * as Yup from 'yup';
 import { Formik, Field, FormikErrors } from 'formik';
 import { useState } from 'react';
-import { IGuestConfirmation } from '../../core/models/guests';
-import { IQueryParams, useQueryParamStore } from '../../core/models/store';
+import { IGuest } from '../../core/models/useGuestStore';
+import { IQueryParams, useQueryParamStore } from '../../core/models/useQueryParamsStore';
 import { BsFillSendFill } from "react-icons/bs";
+import { createRSVP } from '../../core/models/useGuestStore';
+import { Message } from '../../core/utils/utils';
 const validationSchema = Yup.object({
     guests: Yup.array().of(
         Yup.object().shape({
-            name: Yup.string().required('Required field'),
-            contactnumber: Yup.string(),
-            attending: Yup.boolean().required('Required field'),
-            numOfAttendees: Yup.number().required('Required field'),
+            rsvpGuest: Yup.string().required('Required field'),
+            rsvpContact: Yup.string(),
+            rsvpAttending: Yup.string().required('Required field'),
+            rsvpNumOfAttendees: Yup.number().required('Required field'),
         })
     )
 });
 
 // Function to create initial form states based on query parameters
 const createInitialGuests = ({ guest1, guest2, isPair }: IQueryParams) => {
-    const initialGuests: IGuestConfirmation[] = [];
+    const initialGuests: IGuest[] = [];
     if (guest1 || !isPair) {
         initialGuests.push({
-            name: guest1 || '',
-            contactnumber: '',
-            attending: '',
-            numOfAttendees: '',
+            rsvpGuest: guest1 || '',
+            rsvpContact: '',
+            rsvpAttending: '',
+            rsvpNumOfAttendees: 1,
         });
     }
     if (guest2 && isPair) {
         initialGuests.push({
-            name: guest2 || '',
-            contactnumber: '',
-            attending: '',
-            numOfAttendees: '',
+            rsvpGuest: guest2 || '',
+            rsvpContact: '',
+            rsvpAttending: '',
+            rsvpNumOfAttendees: 1,
         });
     }
     return initialGuests;
@@ -45,9 +47,33 @@ const createInitialGuests = ({ guest1, guest2, isPair }: IQueryParams) => {
 export default function GuestConfirmation() {
     const isMobile = useBreakpointValue({ base: true, md: false });
     const { params } = useQueryParamStore();
-    const [guestForm] = useState<IGuestConfirmation[]>(() => createInitialGuests(params));
+    const [guestForm] = useState<IGuest[]>(() => createInitialGuests(params));
     const fontSize = useBreakpointValue({ base: '12px', md: '16px', lg: '18px' });
     const padding = useBreakpointValue({ base: '8px 12px', md: '10px 16px', lg: '12px 24px' });
+
+    const onSubmit = async (data: IGuest[]) => {
+        // Create an array of promises from the data array
+        const promises = data.map((guest: IGuest) => createRSVP(guest));
+
+        try {
+            // Wait for all RSVPs to be processed
+            const results = await Promise.all(promises);
+            console.log('All RSVPs processed:', results);
+            // Handle success for all RSVPs
+            // e.g., show a success message, redirect, etc.
+            results.map(({ rsvpGuest, message }) => {
+                Message('success', `${rsvpGuest} - ${message}`, 4000);
+            });
+
+
+        } catch (error) {
+            // Handle errors here
+            // This will catch any failed RSVP submission
+            Message('error', 'Something weird came up, contact the couple!!', 5000);
+            console.error('Error processing RSVPs:', error);
+            // e.g., show an error message, rollback any changes if needed, etc.
+        }
+    }
     return (
         <MotionBoxContainer>
             <Flex
@@ -62,9 +88,7 @@ export default function GuestConfirmation() {
                         <Formik
                             initialValues={{ guests: guestForm }}
                             validationSchema={validationSchema}
-                            onSubmit={(values) => {
-                                console.log('Form Submitted', values);
-                            }}
+                            onSubmit={(values) => onSubmit(values.guests)}
                         >
                             {({ handleChange, handleSubmit, values, errors }) => (
                                 <VStack
@@ -81,7 +105,7 @@ export default function GuestConfirmation() {
                                     </Flex>
                                     <Card h={'auto'} w={{ base: 'calc(100vw - 80px)', md: 900 }} onClick={(e) => e.stopPropagation()}>
                                         <Accordion allowMultiple={false} defaultIndex={0}>
-                                            {values.guests.map((guest: IGuestConfirmation, index) => (
+                                            {values.guests.map((guest: IGuest, index) => (
                                                 <AccordionItem key={index}>
                                                     <h2>
                                                         <AccordionButton>
@@ -95,60 +119,61 @@ export default function GuestConfirmation() {
                                                         <Box p={1} w={'100%'}>
                                                             <Text textAlign={'center'}></Text>
                                                             <FormControl
-                                                                isInvalid={!!(errors.guests && errors.guests[index] && (errors.guests[index] as FormikErrors<IGuestConfirmation>).name)}
+                                                                isInvalid={!!(errors.guests && errors.guests[index] && (errors.guests[index] as FormikErrors<IGuest>).rsvpGuest)}
                                                                 mb={4}
                                                             >
                                                                 <FormLabel>Name</FormLabel>
                                                                 <Input
                                                                     type='text'
-                                                                    name={`guests[${index}].name`}
+                                                                    name={`guests[${index}].rsvpGuest`}
                                                                     onChange={handleChange}
-                                                                    value={guest.name}
+                                                                    value={guest.rsvpGuest}
+                                                                    isDisabled={true}
                                                                 />
-                                                                <FormErrorMessage>{(errors.guests?.[index] as FormikErrors<IGuestConfirmation>)?.name}</FormErrorMessage>
+                                                                <FormErrorMessage>{(errors.guests?.[index] as FormikErrors<IGuest>)?.rsvpGuest}</FormErrorMessage>
                                                             </FormControl>
                                                             <FormControl
-                                                                isInvalid={!!(errors.guests && errors.guests[index] && (errors.guests[index] as FormikErrors<IGuestConfirmation>).contactnumber)}
+                                                                isInvalid={!!(errors.guests && errors.guests[index] && (errors.guests[index] as FormikErrors<IGuest>).rsvpContact)}
                                                                 mb={4}
                                                             >
                                                                 <FormLabel>Contact number</FormLabel>
                                                                 <Input
                                                                     type='text'
-                                                                    name={`guests[${index}].contactnumber`}
+                                                                    name={`guests[${index}].rsvpContact`}
                                                                     onChange={handleChange}
-                                                                    value={guest.contactnumber}
+                                                                    value={guest.rsvpContact}
                                                                 />
-                                                                <FormErrorMessage>{(errors.guests?.[index] as FormikErrors<IGuestConfirmation>)?.contactnumber}</FormErrorMessage>
+                                                                <FormErrorMessage>{(errors.guests?.[index] as FormikErrors<IGuest>)?.rsvpContact}</FormErrorMessage>
                                                             </FormControl>
                                                             <FormControl
-                                                                isInvalid={!!(errors.guests && errors.guests[index] && (errors.guests[index] as FormikErrors<IGuestConfirmation>).attending)}
+                                                                isInvalid={!!(errors.guests && errors.guests[index] && (errors.guests[index] as FormikErrors<IGuest>).rsvpAttending)}
                                                                 mb={4}
                                                             >
                                                                 <FormLabel>Will you be attending the wedding?</FormLabel>
                                                                 <Field
                                                                     as={Select}
-                                                                    id="gender"
-                                                                    name={`guests[${index}].attending`}
+                                                                    id="rsvpAttending"
+                                                                    name={`guests[${index}].rsvpAttending`}
                                                                     onChange={handleChange}
 
                                                                 >
                                                                     <option value=""></option>
-                                                                    <option value="true">Yes</option>
-                                                                    <option value="false">No</option>
+                                                                    <option value="Yes">Yes</option>
+                                                                    <option value="No">No</option>
                                                                 </Field>
-                                                                <FormErrorMessage>{(errors.guests?.[index] as FormikErrors<IGuestConfirmation>)?.attending}</FormErrorMessage>
+                                                                <FormErrorMessage>{(errors.guests?.[index] as FormikErrors<IGuest>)?.rsvpAttending}</FormErrorMessage>
                                                             </FormControl>
                                                             <FormControl
-                                                                isInvalid={!!(errors.guests && errors.guests[index] && (errors.guests[index] as FormikErrors<IGuestConfirmation>).numOfAttendees)}
+                                                                isInvalid={!!(errors.guests && errors.guests[index] && (errors.guests[index] as FormikErrors<IGuest>).rsvpNumOfAttendees)}
                                                             >
                                                                 <FormLabel>Number of attendees (including yourself)</FormLabel>
                                                                 <Input
                                                                     type='number'
-                                                                    name={`guests[${index}].numOfAttendees`}
+                                                                    name={`guests[${index}].rsvpNumOfAttendees`}
                                                                     onChange={handleChange}
-                                                                    value={guest.numOfAttendees}
+                                                                    value={guest.rsvpNumOfAttendees}
                                                                 />
-                                                                <FormErrorMessage>{(errors.guests?.[index] as FormikErrors<IGuestConfirmation>)?.numOfAttendees}</FormErrorMessage>
+                                                                <FormErrorMessage>{(errors.guests?.[index] as FormikErrors<IGuest>)?.rsvpNumOfAttendees}</FormErrorMessage>
                                                             </FormControl>
                                                         </Box>
                                                     </AccordionPanel>
@@ -174,9 +199,7 @@ export default function GuestConfirmation() {
                         <Formik
                             initialValues={{ guests: guestForm }}
                             validationSchema={validationSchema}
-                            onSubmit={(values) => {
-                                console.log('Form Submitted', values);
-                            }}
+                            onSubmit={(values) => onSubmit(values.guests)}
                         >
                             {({ handleChange, handleSubmit, values, errors }) => (
                                 <VStack
@@ -194,64 +217,65 @@ export default function GuestConfirmation() {
                                     </Flex>
                                     <Card h={'auto'} w={{ base: 'calc(100vw - 80px)', md: 720 }} onClick={(e) => e.stopPropagation()}>
                                         <Flex direction={'row'} flexDir={'row'}>
-                                            {values.guests.map((guest: IGuestConfirmation, index) => (
+                                            {values.guests.map((guest: IGuest, index) => (
                                                 <Box px={12} pt={12} pb={4} w={'100%'} key={index}>
                                                     <Text textAlign={'center'}>Guest {index + 1}</Text>
                                                     <FormControl
-                                                        isInvalid={!!(errors.guests && errors.guests[index] && (errors.guests[index] as FormikErrors<IGuestConfirmation>).name)}
+                                                        isInvalid={!!(errors.guests && errors.guests[index] && (errors.guests[index] as FormikErrors<IGuest>).rsvpGuest)}
                                                         mb={4}
                                                     >
                                                         <FormLabel>Name</FormLabel>
                                                         <Input
                                                             type='text'
-                                                            name={`guests[${index}].name`}
+                                                            name={`guests[${index}].rsvpGuest`}
                                                             onChange={handleChange}
-                                                            value={guest.name}
+                                                            value={guest.rsvpGuest}
+                                                            isDisabled={true}
                                                         />
-                                                        <FormErrorMessage>{(errors.guests?.[index] as FormikErrors<IGuestConfirmation>)?.name}</FormErrorMessage>
+                                                        <FormErrorMessage>{(errors.guests?.[index] as FormikErrors<IGuest>)?.rsvpGuest}</FormErrorMessage>
                                                     </FormControl>
                                                     <FormControl
-                                                        isInvalid={!!(errors.guests && errors.guests[index] && (errors.guests[index] as FormikErrors<IGuestConfirmation>).contactnumber)}
+                                                        isInvalid={!!(errors.guests && errors.guests[index] && (errors.guests[index] as FormikErrors<IGuest>).rsvpContact)}
                                                         mb={4}
                                                     >
                                                         <FormLabel>Contact number</FormLabel>
                                                         <Input
-                                                            type='text'
-                                                            name={`guests[${index}].contactnumber`}
+                                                            type='number'
+                                                            name={`guests[${index}].rsvpContact`}
                                                             onChange={handleChange}
-                                                            value={guest.contactnumber}
+                                                            value={guest.rsvpContact}
                                                         />
-                                                        <FormErrorMessage>{(errors.guests?.[index] as FormikErrors<IGuestConfirmation>)?.contactnumber}</FormErrorMessage>
+                                                        <FormErrorMessage>{(errors.guests?.[index] as FormikErrors<IGuest>)?.rsvpContact}</FormErrorMessage>
                                                     </FormControl>
                                                     <FormControl
-                                                        isInvalid={!!(errors.guests && errors.guests[index] && (errors.guests[index] as FormikErrors<IGuestConfirmation>).attending)}
+                                                        isInvalid={!!(errors.guests && errors.guests[index] && (errors.guests[index] as FormikErrors<IGuest>).rsvpAttending)}
                                                         mb={4}
                                                     >
                                                         <FormLabel>Will you be attending the wedding?</FormLabel>
                                                         <Field
                                                             as={Select}
-                                                            id="gender"
-                                                            name={`guests[${index}].attending`}
+                                                            id="rsvpAttending"
+                                                            name={`guests[${index}].rsvpAttending`}
                                                             onChange={handleChange}
 
                                                         >
                                                             <option value=""></option>
-                                                            <option value="true">Yes</option>
-                                                            <option value="false">No</option>
+                                                            <option value="Yes">Yes</option>
+                                                            <option value="No">No</option>
                                                         </Field>
-                                                        <FormErrorMessage>{(errors.guests?.[index] as FormikErrors<IGuestConfirmation>)?.attending}</FormErrorMessage>
+                                                        <FormErrorMessage>{(errors.guests?.[index] as FormikErrors<IGuest>)?.rsvpAttending}</FormErrorMessage>
                                                     </FormControl>
                                                     <FormControl
-                                                        isInvalid={!!(errors.guests && errors.guests[index] && (errors.guests[index] as FormikErrors<IGuestConfirmation>).numOfAttendees)}
+                                                        isInvalid={!!(errors.guests && errors.guests[index] && (errors.guests[index] as FormikErrors<IGuest>).rsvpNumOfAttendees)}
                                                     >
                                                         <FormLabel>Number of attendees (including yourself)</FormLabel>
                                                         <Input
                                                             type='number'
-                                                            name={`guests[${index}].numOfAttendees`}
+                                                            name={`guests[${index}].rsvpNumOfAttendees`}
                                                             onChange={handleChange}
-                                                            value={guest.numOfAttendees}
+                                                            value={guest.rsvpNumOfAttendees}
                                                         />
-                                                        <FormErrorMessage>{(errors.guests?.[index] as FormikErrors<IGuestConfirmation>)?.numOfAttendees}</FormErrorMessage>
+                                                        <FormErrorMessage>{(errors.guests?.[index] as FormikErrors<IGuest>)?.rsvpNumOfAttendees}</FormErrorMessage>
                                                     </FormControl>
                                                 </Box>
                                             )

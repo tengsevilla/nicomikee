@@ -35,7 +35,7 @@ export default function Couple() {
                                 height={{ xs: '148px', base: '216px', md: 'auto' }}
                                 boxShadow={'16px 10px 30px -5px rgba(0, 0, 0, 0.3)'}
                             />
-                            <Heading as='h2' size={{ base: 'md', md: 'xl' }} my={{ xs: 2, base: 2, xl: 6 }}>
+                            <Heading as='h2' size={{ base: 'md', md: 'xl' }} my={{ xs: 2, base: 2, xl: 6 }} fontFamily={'Playwrite NZ, cursive'}>
                                 Jolly Hotdog
                             </Heading>
                             <Text >Son of</Text>
@@ -53,7 +53,7 @@ export default function Couple() {
                                 height={{ xs: '128px', base: '198px', md: 'auto' }}
                                 boxShadow={'16px 10px 30px -5px rgba(0, 0, 0, 0.3)'}
                             />
-                            <Heading as='h2' size={{ base: 'md', md: 'xl' }} my={{ xs: 2, base: 2, xl: 6 }}>
+                            <Heading as='h2' size={{ base: 'md', md: 'xl' }} my={{ xs: 2, base: 2, xl: 6 }} fontFamily={'Playwrite NZ, cursive'}>
                                 Jolly Spaghetti
                             </Heading>
                             <Text >Daughter of</Text>

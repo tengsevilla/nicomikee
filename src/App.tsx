@@ -5,25 +5,44 @@ import Invitation from './pages/Invite/Invitation';
 import Couple from './pages/Invite/Couple';
 './components/Navigation/NavigationInvite';
 import { Parallax, ParallaxLayer, IParallax } from '@react-spring/parallax'
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import EventContainer from './pages/Invite/Event';
 import GuestConfirmation from './pages/Invite/GuestConfirmation';
-import { useQueryParamStore, useSyncQueryParams } from './core/models/store';
+import { useQueryParamStore } from './core/models/useQueryParamsStore';
 import WelcomeView from './pages/Invite/WelcomeView';
 import EventPage from './pages/Event/EventPage';
 import HeaderInvitation from './components/Header/HeaderInvitation';
 import EventGallery from './pages/Event/EventGallery';
+import { ECookies } from './core/models';
+import { useEventStore, fetchEvent } from './core/models/useEventStore';
+import { getCookie, Message, setCookie } from './core/utils/utils';
+import { useQuery } from '@tanstack/react-query';
+import { useSyncQueryParameters } from './core/utils/useSyncQueryParameters';
+import { EVENT_ID } from './data/eventConfig';
 
 function App() {
+  useSyncQueryParameters();
   const parallax = useRef<IParallax>(null!);
-  useSyncQueryParams();
   const { params } = useQueryParamStore();
-  const { guest1, guest2, isPair } = params;
+  const { guest1, guest2 } = params;
   const isViewPage = (guest1 && guest2) ? false : true;
-
-  useEffect(() => {
-    console.log({ guest1, guest2, isPair, isViewPage });
-  }, [params]);
+  const { setEvent, event } = useEventStore();
+  const accessToken = getCookie(ECookies.ACCESS_TOKEN);
+  useQuery({
+    queryKey: ['fetchEvent'],
+    queryFn: async () => {
+      const response = await fetchEvent(EVENT_ID);
+      if (response.status !== 200) {
+        Message('error', response.message);
+        return
+      }
+      console.log(event);
+      setEvent(response.data);  
+      setCookie(ECookies.ACCESS_TOKEN, response.access_token, response.expiresIn);
+      return response
+    },
+    enabled: accessToken === undefined, // Only run the query if the access_token is not present
+  });
 
   return (
     <ChakraProvider theme={theme}>

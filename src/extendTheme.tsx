@@ -24,8 +24,8 @@ const customTheme = extendTheme({
         },
     },
     fonts: {
-        body: `'DMSans', sans-serif !important`, // Set the custom font for the body text
-        heading: `'DMSans', sans-serif !important`,
+        heading: "Ysabeau SC, sans-serif !important", // assuming you meant Playfair Display
+        body: "Ysabeau SC, sans-serif !important",
     },
     styles: {
         global: {

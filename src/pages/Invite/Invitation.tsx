@@ -1,7 +1,6 @@
 import { Stack, Flex, Text, VStack, Box, Heading } from '@chakra-ui/react'
-// import './Hero.scss';
 import BGInvitation from '../../core/assets/images/bg-invitation.jpg';
-import { useQueryParamStore } from '../../core/models/store';
+import { useQueryParamStore } from '../../core/models/useQueryParamsStore';
 
 export default function Invitation() {
     const { params } = useQueryParamStore();
@@ -64,18 +63,23 @@ export default function Invitation() {
                             textAlign={'center'}
                             color={'white'}
                             textShadow={'1px 1px 2px rgba(0, 0, 0, 0.7)'}
-                            mb={8}
+                            pb={10}
+                            pt={4}
+                            px={4}
+                            fontFamily={'Playwrite NZ, cursive'}
                         >
                             Jolly Spaghetti
                         </Heading>
                         <Heading
                             as='h1'
-                            size={{ base: '2xl', md: '4xl' }}
+                            size={{ base: '2xl', md: '2xl' }}
                             noOfLines={1}
                             textAlign={'center'}
                             color={'white'}
                             textShadow={'1px 1px 2px rgba(0, 0, 0, 0.7)'}
-                            mb={8}
+                            pb={8}
+                            pt={4}
+                            fontFamily={'Playwrite NZ, cursive'}
                         >
                             &
                         </Heading>
@@ -87,6 +91,7 @@ export default function Invitation() {
                             color={'white'}
                             textShadow={'1px 1px 2px rgba(0, 0, 0, 0.7)'}
                             pb={16}
+                            fontFamily={'Playwrite NZ, cursive'}
                         >
                             Jolly Hotdog
                         </Heading>

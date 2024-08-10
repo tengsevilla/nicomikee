@@ -15,8 +15,12 @@ import {
     useBreakpointValue,
     FormHelperText,
 } from "@chakra-ui/react";
-import { Formik, Field, Form } from "formik";
+import { useMutation } from "@tanstack/react-query";
+import { Formik, Field, Form, FormikHelpers } from "formik";
 import * as Yup from "yup";
+import { Message } from "../../core/utils/utils";
+import { useRef } from "react";
+import { createMessage, IMessage } from "../../core/models/useMessageStore";
 
 interface Props {
     isOpen: boolean;
@@ -25,16 +29,34 @@ interface Props {
 
 // Validation schema
 const validationSchema = Yup.object({
-    name: Yup.string()
+    messageName: Yup.string()
         .required("This is required")
-        .min(2, "This must be at least 2 characters"),
-    message: Yup.string()
+        .min(3, "This must be at least 3 characters"),
+    messageContent: Yup.string()
         .required("This is required")
         .min(10, "This must be at least 10 characters"),
 });
 
 export default function EventSendMessage({ isOpen, onClose }: Props) {
+    const resetFormRef = useRef<() => void>(() => { });
     const buttonSize = useBreakpointValue({ base: "sm", md: "md", lg: "lg" });
+    const qMessage = useMutation({
+        mutationFn: (data: IMessage) => {
+            return createMessage(data);
+        },
+        onSuccess: (response) => {
+            if (response.status !== 200) {
+                Message('error', response.message);
+                return
+            }
+            Message('success', 'Message succesfully sent!');
+            resetFormRef.current();
+            onClose();
+        },
+        onError: () => {
+            console.error('ERROR: API Failed');
+        },
+    })
 
     return (
         <Modal
@@ -48,47 +70,46 @@ export default function EventSendMessage({ isOpen, onClose }: Props) {
                 <ModalHeader>Your message</ModalHeader>
                 <ModalCloseButton />
                 <Formik
-                    initialValues={{ name: "", message: "" }}
+                    initialValues={{ messageName: "", messageContent: "" }}
                     validationSchema={validationSchema}
-                    onSubmit={(values, actions) => {
-                        console.log(values);
-                        actions.setSubmitting(false);
-                        onClose();
+                    onSubmit={(values, { resetForm }: FormikHelpers<IMessage>) => {
+                        resetFormRef.current = resetForm;
+                        qMessage.mutate(values);
                     }}
                 >
                     {(props) => (
                         <Form>
                             <ModalBody pb={6}>
                                 {/* Name: label then input. below input there's a subtext helper */}
-                                <Field name="name">
+                                <Field name="messageName">
                                     {({ field, form }: { field: any; form: any }) => (
                                         <FormControl
-                                            isInvalid={form.errors.name && form.touched.name}
+                                            isInvalid={form.errors.messageName && form.touched.messageName}
                                         >
-                                            <FormLabel htmlFor="name">Name</FormLabel>
-                                            <Input {...field} id="name" placeholder="Name" size={{ base: 'sm', md: 'md' }} />
+                                            <FormLabel htmlFor="messageName">Name</FormLabel>
+                                            <Input {...field} id="messageName" size={{ base: 'sm', md: 'md' }} />
                                             <FormHelperText fontSize={'small'}>Name or nickname that they either know </FormHelperText>
-                                            <FormErrorMessage fontSize={'small'}>{form.errors.name}</FormErrorMessage>
+                                            <FormErrorMessage fontSize={'small'}>{form.errors.messageName}</FormErrorMessage>
                                         </FormControl>
                                     )}
                                 </Field>
 
                                 {/* Say something to the newly weds: Label, Textarea. below input there's a subtext helper */}
-                                <Field name="message">
+                                <Field name="messageContent">
                                     {({ field, form }: { field: any; form: any }) => (
                                         <FormControl
-                                            isInvalid={form.errors.message && form.touched.message}
+                                            isInvalid={form.errors.messageContent && form.touched.messageContent}
                                         >
-                                            <FormLabel htmlFor="message" mt={4}>
+                                            <FormLabel htmlFor="messageContent" mt={4}>
                                                 Say something to the newly weds
                                             </FormLabel>
                                             <Textarea
                                                 {...field}
-                                                id="message"
+                                                id="messageContent"
                                                 size={{ base: 'xs', md: 'sm', lg: 'md' }}
                                             />
                                             <FormHelperText fontSize={'small'}>Share your thoughts and wishes</FormHelperText>
-                                            <FormErrorMessage fontSize={'small'}>{form.errors.message}</FormErrorMessage>
+                                            <FormErrorMessage fontSize={'small'}>{form.errors.messageContent}</FormErrorMessage>
                                         </FormControl>
                                     )}
                                 </Field>
@@ -109,7 +130,7 @@ export default function EventSendMessage({ isOpen, onClose }: Props) {
                                     isLoading={props.isSubmitting}
                                     type="submit"
                                 >
-                                    Save
+                                    Submit
                                 </Button>
                             </ModalFooter>
                         </Form>
