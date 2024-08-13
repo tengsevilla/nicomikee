@@ -6,10 +6,10 @@ export enum ECookies {
 /*
     @TOUPDATE
     DEV URL: http://localhost:3030
-    PROD URL: https://kdautodb-edfcdbef7a78.herokuapp.com
+    PROD URL: https://w3invitations-api-25cf4001559e.herokuapp.com
 */
 export const config = {
-    url: 'http://localhost:3030',
+    url: 'https://w3invitations-api-25cf4001559e.herokuapp.com',
     headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'

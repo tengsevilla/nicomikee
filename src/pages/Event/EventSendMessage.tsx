@@ -120,7 +120,7 @@ export default function EventSendMessage({ isOpen, onClose }: Props) {
                                     size={buttonSize}
                                     onClick={onClose}
                                     mr={4}
-                                    isDisabled={props.isSubmitting}
+                                    isLoading={props.isSubmitting}
                                 >
                                     Cancel
                                 </Button>

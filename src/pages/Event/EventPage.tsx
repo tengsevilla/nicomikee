@@ -11,21 +11,39 @@ import BGMobileCentered from '../../core/assets/images/bg-mobile-centered.jpg';
 import { MdAddAPhoto, MdSend } from 'react-icons/md';
 import EventSendMessage from './EventSendMessage';
 import { useRef, useState } from 'react';
+import { Message } from '../../core/utils/utils';
+import { storeImageDataToDB, uploadImageToS3 } from '../../core/models/useImageStore';
 
 export default function EventPage() {
     const isMobile = useBreakpointValue({ base: true, md: false });
     const buttonSize = useBreakpointValue({ base: 'sm', md: 'md', lg: 'lg' });
     const [modal, setModal] = useState<boolean>(false);
-
+    const [isUploading, setIsUploading] = useState<boolean>(false);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-    const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const files = event.target.files;
-        if (files && files.length > 0) {
-            const file = files[0];
-            // Handle the file upload logic here
-            console.log('Selected file:', file);
+    const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsUploading(true);
+        const file = event.target.files?.[0] ?? null;
+        const formData = new FormData();
+
+        if (file && file.type.startsWith('image/')) {
+            Message("info", "Uploading image...");
+            formData.append("image", file);
+            const ret = await uploadImageToS3(formData);
+            if (ret.status === "success") {
+                await storeImageDataToDB(ret).then((data) => {
+                    if (data.status === 200) {
+                        Message("success", "Image uploaded successfully.");
+                    } else Message("error", "Failed to add in the database.");
+                });
+            } else {
+                Message("error", "Failed to upload in S3 AWS.");
+            }
+            fileInputRef.current!.value = "";
+        } else {
+            Message("error", "Please select an image file.");
         }
+        setIsUploading(false);
     };
 
     return (
@@ -80,6 +98,7 @@ export default function EventPage() {
                     ref={fileInputRef}
                     style={{ display: 'none' }}
                     onChange={handlePhotoUpload}
+                    formEncType={'multipart/form-data'}
                 />
                 <Button
                     leftIcon={<MdAddAPhoto />}
@@ -89,6 +108,7 @@ export default function EventPage() {
                             fileInputRef.current.click();
                         }
                     }}
+                    isLoading={isUploading}
                 >
                     Share
                 </Button>

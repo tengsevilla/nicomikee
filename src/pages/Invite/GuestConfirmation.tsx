@@ -11,6 +11,7 @@ import { IQueryParams, useQueryParamStore } from '../../core/models/useQueryPara
 import { BsFillSendFill } from "react-icons/bs";
 import { createRSVP } from '../../core/models/useGuestStore';
 import { Message } from '../../core/utils/utils';
+
 const validationSchema = Yup.object({
     guests: Yup.array().of(
         Yup.object().shape({
@@ -50,8 +51,9 @@ export default function GuestConfirmation() {
     const [guestForm] = useState<IGuest[]>(() => createInitialGuests(params));
     const fontSize = useBreakpointValue({ base: '12px', md: '16px', lg: '18px' });
     const padding = useBreakpointValue({ base: '8px 12px', md: '10px 16px', lg: '12px 24px' });
-
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const onSubmit = async (data: IGuest[]) => {
+        setIsLoading(true);
         // Create an array of promises from the data array
         const promises = data.map((guest: IGuest) => createRSVP(guest));
 
@@ -73,6 +75,7 @@ export default function GuestConfirmation() {
             console.error('Error processing RSVPs:', error);
             // e.g., show an error message, rollback any changes if needed, etc.
         }
+        setIsLoading(false);
     }
     return (
         <MotionBoxContainer>
@@ -186,7 +189,16 @@ export default function GuestConfirmation() {
                                             )}
                                         </Accordion>
                                         <Flex justifyContent={'center'} mt={'auto'} py={4}>
-                                            <Button leftIcon={<BsFillSendFill />} fontSize={fontSize} padding={padding} w={'auto'} onClick={() => { handleSubmit() }}>Send confirmation</Button>
+                                            <Button
+                                                leftIcon={<BsFillSendFill />}
+                                                fontSize={fontSize}
+                                                padding={padding}
+                                                w={'auto'}
+                                                onClick={() => { handleSubmit() }}
+                                                isLoading={isLoading}
+                                            >
+                                                Send confirmation
+                                            </Button>
                                         </Flex>
 
                                     </Card>
@@ -282,7 +294,16 @@ export default function GuestConfirmation() {
                                             )}
                                         </Flex>
                                         <Flex justifyContent={'center'} mt={'auto'} pb={8}>
-                                            <Button leftIcon={<BsFillSendFill />} fontSize={fontSize} padding={padding} w={'auto'} onClick={() => { handleSubmit() }}>Send confirmation</Button>
+                                            <Button
+                                                leftIcon={<BsFillSendFill />}
+                                                fontSize={fontSize}
+                                                padding={padding}
+                                                w={'auto'}
+                                                onClick={() => { handleSubmit() }}
+                                                isLoading={isLoading}
+                                            >
+                                                Send confirmation
+                                            </Button>
                                         </Flex>
 
                                     </Card>
