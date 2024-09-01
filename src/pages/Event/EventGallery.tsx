@@ -13,14 +13,11 @@ const EventGallery = () => {
         mutationFn: fetchAllImageURL,
         onSuccess: (data) => {
             setImages(data);
-            console.log(data);
         },
-        onError: (error, variables, context) => {
+        onError: (error) => {
             // I will fire first
-        },
-        onSettled: (data, error, variables, context) => {
-            // I will fire first
-        },
+            console.error(error)
+        }
     })
 
     useEffect(() => {
