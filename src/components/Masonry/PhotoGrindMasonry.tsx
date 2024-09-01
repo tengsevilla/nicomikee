@@ -6,13 +6,21 @@ import data from './data'
 
 import styles from './PhotoGridMasonry.module.css'
 
-export default function PhotoGridMasonry() {
+export interface IImageProp {
+    url: string;
+    height: number;
+}
+
+interface Prop {
+    images: IImageProp[];
+}
+export default function PhotoGridMasonry({ images }: Prop) {
     // Hook1: Tie media queries to the number of columns
     const columns = useMedia(['(min-width: 1500px)', '(min-width: 1000px)', '(min-width: 600px)'], [5, 4, 3], 2)
     // Hook2: Measure the width of the container element
     const [ref, { width }] = useMeasure()
     // Hook3: Hold items
-    const [items, set] = useState(data)
+    const [items, set] = useState(images)
     // Hook4: shuffle data every 2 seconds
     useEffect(() => {
         const t = setInterval(() => set(shuffle), 8000)
@@ -31,7 +39,7 @@ export default function PhotoGridMasonry() {
     }, [columns, items, width])
     // Hook6: Turn the static grid values into animated transitions, any addition, removal or change will be animated
     const transitions = useTransition(gridItems, {
-        key: (item: { css: string; height: number }) => item.css,
+        key: (item: { url: string; height: number }) => item.url,
         from: ({ x, y, width, height }) => ({ x, y, width, height, opacity: 0 }),
         enter: ({ x, y, width, height }) => ({ x, y, width, height, opacity: 1 }),
         update: ({ x, y, width, height }) => ({ x, y, width, height }),
@@ -84,7 +92,8 @@ export default function PhotoGridMasonry() {
         <div ref={ref} className={styles.list} style={{ height: Math.max(...heights) }}>
             {transitions((style, item) => (
                 <a.div style={style}>
-                    <div style={{ backgroundImage: `url(${item.css}?auto=compress&dpr=2&h=500&w=500)` }} />
+                    {/* <div style={{ backgroundImage: `url(${item.url}?auto=compress&dpr=2&h=500&w=500)` }} /> */}
+                    <div style={{ backgroundImage: `url(${item.url})` }} />
                 </a.div>
             ))}
         </div>

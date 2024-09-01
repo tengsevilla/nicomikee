@@ -1,6 +1,4 @@
 import { create } from 'zustand'
-import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 
 // Define the keys for query parameters as a type
 export enum EQueryParams {

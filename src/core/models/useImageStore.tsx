@@ -38,6 +38,8 @@ export interface IS3ImageDB {
     eventId: string;
     fileName: string;
     fileSizeInMegabytes: Float32Array;
+    height: string;
+    width: string;
 }
 
 export const storeImageDataToDB = async (data: IS3ImageDB) => {

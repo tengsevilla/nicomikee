@@ -1,5 +1,5 @@
 import { EVENT_ID } from '../../data/eventConfig';
-import { generateGUID } from '../utils/utils';
+import { generateGUIDV7 } from '../utils/utils';
 import { fetchApi, config } from './index';
 
 export interface IGuest {
@@ -10,5 +10,5 @@ export interface IGuest {
 }
 
 export const createRSVP = async (data: IGuest) => {
-    return await fetchApi(`${config.url}/rsvp`, 'POST', { eventId: EVENT_ID, rsvpId: generateGUID(), ...data });
+    return await fetchApi(`${config.url}/rsvp`, 'POST', { eventId: EVENT_ID, rsvpId: generateGUIDV7(), ...data });
 };

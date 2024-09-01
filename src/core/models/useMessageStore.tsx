@@ -1,5 +1,5 @@
 import { EVENT_ID } from '../../data/eventConfig';
-import { generateGUID } from '../utils/utils';
+import { generateGUIDV7 } from '../utils/utils';
 import { fetchApi, config } from './index';
 
 export interface IMessage {
@@ -8,5 +8,5 @@ export interface IMessage {
 }
 
 export const createMessage = async (data: IMessage) => {
-    return await fetchApi(`${config.url}/message`, 'POST', { eventId: EVENT_ID, messageId: generateGUID(), ...data });
+    return await fetchApi(`${config.url}/message`, 'POST', { eventId: EVENT_ID, messageId: generateGUIDV7(), ...data });
 };

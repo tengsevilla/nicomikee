@@ -1,10 +1,31 @@
 import { Flex, useBreakpointValue } from '@chakra-ui/react';
 import BGFullCentered from '../../core/assets/images/bg-full-centered.jpg';
 import BGMobileCentered from '../../core/assets/images/bg-mobile-centered.jpg';
-import PhotoGridMasonry from '../../components/Masonry/PhotoGrindMasonry';
+import PhotoGridMasonry, { IImageProp } from '../../components/Masonry/PhotoGrindMasonry';
+import { useMutation } from '@tanstack/react-query';
+import { fetchAllImageURL } from '../../core/models/useImageStore';
+import { useEffect, useState } from 'react';
 
 const EventGallery = () => {
+    const [images, setImages] = useState<IImageProp[]>([]);
     const isMobile = useBreakpointValue({ base: true, md: false });
+    const mutation = useMutation({
+        mutationFn: fetchAllImageURL,
+        onSuccess: (data) => {
+            setImages(data);
+            console.log(data);
+        },
+        onError: (error, variables, context) => {
+            // I will fire first
+        },
+        onSettled: (data, error, variables, context) => {
+            // I will fire first
+        },
+    })
+
+    useEffect(() => {
+        mutation.mutate();
+    }, []);
 
     return (
         <Flex
@@ -16,7 +37,9 @@ const EventGallery = () => {
             p={{ base: 4, md: 8 }}
         >
             {/* Add your gallery content here */}
-            <PhotoGridMasonry />
+            {
+                images.length > 0 && <PhotoGridMasonry images={images} />
+            }
         </Flex>
 
     );
